@@ -1,20 +1,41 @@
-﻿Character character1 = new Character();
+﻿Character main = new Character();
+Character partner = main.CreatePartner();
 
+Console.WriteLine("-------------------------------------------------");
 Console.WriteLine("Your character is: ");
 Console.WriteLine();
-Console.WriteLine(character1.first_name + " " + character1.last_name);
-Console.WriteLine(character1.gender + " | " + character1.age + " years old");
-Console.WriteLine(character1.title + " of " + character1.location);
+Console.WriteLine(main.first_name + " " + main.last_name);
+Console.WriteLine(main.gender + " | " + main.age + " years old");
+Console.WriteLine(main.title + " of " + main.location);
 Console.WriteLine();
 Console.WriteLine("Traits: ");
-Console.WriteLine(character1.trait_1);
-Console.WriteLine(character1.trait_2);
-Console.WriteLine(character1.trait_3);
+Console.WriteLine(main.trait_1);
+Console.WriteLine(main.trait_2);
+Console.WriteLine(main.trait_3);
 Console.WriteLine();
-Console.WriteLine("Diplomacy: " + character1.diplomacy + "/100");
-Console.WriteLine("Military: " + character1.military + "/100");
-Console.WriteLine("Learning: " + character1.learning + "/100");
-Console.WriteLine("Wealth: " + character1.wealth + "/100");
+Console.WriteLine("Diplomacy: " + main.diplomacy + "/100");
+Console.WriteLine("Military: " + main.military + "/100");
+Console.WriteLine("Learning: " + main.learning + "/100");
+Console.WriteLine("Wealth: " + main.wealth + "/100");
+
+Console.WriteLine("-------------------------------------------------");
+
+Console.WriteLine("Your character's spouse is: ");
+Console.WriteLine();
+Console.WriteLine(partner.first_name + " " + partner.last_name);
+Console.WriteLine(partner.gender + " | " + partner.age + " years old");
+Console.WriteLine(partner.title + " of " + partner.location);
+Console.WriteLine();
+Console.WriteLine("Traits: ");
+Console.WriteLine(partner.trait_1);
+Console.WriteLine(partner.trait_2);
+Console.WriteLine(partner.trait_3);
+Console.WriteLine();
+Console.WriteLine("Diplomacy: " + partner.diplomacy + "/100");
+Console.WriteLine("Military: " + partner.military + "/100");
+Console.WriteLine("Learning: " + partner.learning + "/100");
+Console.WriteLine("Wealth: " + partner.wealth + "/100");
+Console.WriteLine("-------------------------------------------------");
 
 
 class Character
@@ -33,7 +54,68 @@ class Character
     public int diplomacy;
     public int wealth;
 
-    void apply_trait(String trait)
+    public String PickLocation(String title)
+    {
+        switch (title)
+        {
+            case "Baron":
+            case "Baroness":
+                return CharacterData.PickRandom(CharacterData.baron_location_list);
+            case "Viscount":
+            case "Viscountess":
+                return CharacterData.PickRandom(CharacterData.viscount_location_list);
+            case "Count":
+            case "Countess":
+                return CharacterData.PickRandom(CharacterData.count_location_list);
+            case "Duke":
+            case "Duchess":
+                return CharacterData.PickRandom(CharacterData.duke_location_list);
+            case "Prince":
+            case "Princess":
+                return CharacterData.PickRandom(CharacterData.prince_location_list);
+            case "King":
+            case "Queen":
+                return CharacterData.PickRandom(CharacterData.king_location_list);
+            case "Emperor":
+            case "Empress":
+                return CharacterData.PickRandom(CharacterData.emperor_location_list);
+            default:
+                return "";
+        }
+    }
+
+    public int PickWealth(String title)
+    {
+        Random random = new Random();
+        switch (title)
+        {
+            case "Baron":
+            case "Baroness":
+                return random.Next(0, 25);
+            case "Viscount":
+            case "Viscountess":
+                return random.Next(10, 30);
+            case "Count":
+            case "Countess":
+                return random.Next(15, 40);
+            case "Duke":
+            case "Duchess":
+                return random.Next(25, 55);
+            case "Prince":
+            case "Princess":
+                return random.Next(40, 75);
+            case "King":
+            case "Queen":
+                return random.Next(60, 90);
+            case "Emperor":
+            case "Empress":
+                return random.Next(80, 100);
+            default:
+                return 0;
+        }
+    }
+
+    public void ApplyTrait(String trait)
     {
         switch (trait)
         {
@@ -159,48 +241,8 @@ class Character
             title = CharacterData.PickRandom(CharacterData.female_title_list);
         }
 
-        switch (title)
-        {
-            case "Baron":
-            case "Baroness":
-                location = CharacterData.PickRandom(CharacterData.baron_location_list);
-                wealth = random.Next(0, 25);
-                break;
-            case "Viscount":
-            case "Viscountess":
-                location = CharacterData.PickRandom(CharacterData.viscount_location_list);
-                wealth = random.Next(10, 30);
-                break;
-            case "Count":
-            case "Countess":
-                location = CharacterData.PickRandom(CharacterData.count_location_list);
-                wealth = random.Next(15, 40);
-                break;
-            case "Duke":
-            case "Duchess":
-                location = CharacterData.PickRandom(CharacterData.duke_location_list);
-                wealth = random.Next(25, 55);
-                break;
-            case "Prince":
-            case "Princess":
-                location = CharacterData.PickRandom(CharacterData.prince_location_list);
-                wealth = random.Next(40, 75);
-                break;
-            case "King":
-            case "Queen":
-                location = CharacterData.PickRandom(CharacterData.king_location_list);
-                wealth = random.Next(60, 90);
-                break;
-            case "Emperor":
-            case "Empress":
-                location = CharacterData.PickRandom(CharacterData.emperor_location_list);
-                wealth = random.Next(80, 100);
-                break;
-            default:
-                location = "";
-                wealth = 0;
-                break;
-        }
+        location = PickLocation(title);
+        wealth = PickWealth(title);
 
         military = random.Next(0, 90);
         diplomacy = random.Next(0, 90);
@@ -216,9 +258,9 @@ class Character
         {
             trait_3 = CharacterData.PickRandom(CharacterData.trait_list);
         }
-        apply_trait(trait_1);
-        apply_trait(trait_2);
-        apply_trait(trait_3);
+        ApplyTrait(trait_1);
+        ApplyTrait(trait_2);
+        ApplyTrait(trait_3);
 
         if (diplomacy > 100)
         {
@@ -252,6 +294,70 @@ class Character
         {
             wealth = 0;
         }
+    }
+
+    public Character CreatePartner()
+    {
+        Character partner = new Character();
+        Random random = new Random();
+        partner.age = age + random.Next(-10, 11);
+        if (gender == "Male")
+        {
+            partner.gender = "Female";
+        }
+        else
+        {
+            partner.gender = "Male";
+        }
+        partner.last_name = last_name;
+        switch (title)
+        {
+            case "Baron":
+                partner.title = "Baroness";
+                break;
+            case "Baroness":
+                partner.title = "Baron";
+                break;
+            case "Viscount":
+                partner.title = "Viscountess";
+                break;
+            case "Viscountess":
+                partner.title = "Viscount";
+                break;
+            case "Count":
+                partner.title = "Countess";
+                break;
+            case "Countess":
+                partner.title = "Count";
+                break;
+            case "Duke":
+                partner.title = "Duchess";
+                break;
+            case "Duchess":
+                partner.title = "Duke";
+                break;
+            case "Prince":
+                partner.title = "Princess";
+                break;
+            case "Princess":
+                partner.title = "Prince";
+                break;
+            case "King":
+                partner.title = "Queen";
+                break;
+            case "Queen":
+                partner.title = "King";
+                break;
+            case "Emperor":
+                partner.title = "Empress";
+                break;
+            case "Empress":
+                partner.title = "Emperor";
+                break;
+        }
+        partner.location = location;
+        partner.wealth = PickWealth(partner.title);
+        return partner;
     }
 }
 
