@@ -1,5 +1,6 @@
 ﻿Character main = new Character();
 Character partner = main.CreatePartner();
+Character child = main.CreateChild(partner);
 
 Console.WriteLine("-------------------------------------------------");
 Console.WriteLine("Your character is: ");
@@ -17,6 +18,7 @@ Console.WriteLine("Diplomacy: " + main.diplomacy + "/100");
 Console.WriteLine("Military: " + main.military + "/100");
 Console.WriteLine("Learning: " + main.learning + "/100");
 Console.WriteLine("Wealth: " + main.wealth + "/100");
+Console.WriteLine("Overall: " + main.overall + "/100");
 
 Console.WriteLine("-------------------------------------------------");
 
@@ -35,6 +37,26 @@ Console.WriteLine("Diplomacy: " + partner.diplomacy + "/100");
 Console.WriteLine("Military: " + partner.military + "/100");
 Console.WriteLine("Learning: " + partner.learning + "/100");
 Console.WriteLine("Wealth: " + partner.wealth + "/100");
+Console.WriteLine("Overall: " + partner.overall + "/100");
+
+Console.WriteLine("-------------------------------------------------");
+
+Console.WriteLine("Your character's child is: ");
+Console.WriteLine();
+Console.WriteLine(child.first_name + " " + child.last_name);
+Console.WriteLine(child.gender + " | " + child.age + " years old");
+Console.WriteLine(child.title + " of " + child.location);
+Console.WriteLine();
+Console.WriteLine("Traits: ");
+Console.WriteLine(child.trait_1);
+Console.WriteLine(child.trait_2);
+Console.WriteLine(child.trait_3);
+Console.WriteLine();
+Console.WriteLine("Diplomacy: " + child.diplomacy + "/100");
+Console.WriteLine("Military: " + child.military + "/100");
+Console.WriteLine("Learning: " + child.learning + "/100");
+Console.WriteLine("Wealth: " + child.wealth + "/100");
+Console.WriteLine("Overall: " + child.overall + "/100");
 Console.WriteLine("-------------------------------------------------");
 
 
@@ -53,6 +75,7 @@ class Character
     public int learning;
     public int diplomacy;
     public int wealth;
+    public int overall;
 
     public String PickLocation(String title)
     {
@@ -224,6 +247,42 @@ class Character
         }
     }
 
+    public void ClampStats()
+    {
+        if (diplomacy > 100)
+        {
+            diplomacy = 100;
+        }
+        if (military > 100)
+        {
+            military = 100;
+        }
+        if (learning > 100)
+        {
+            learning = 100;
+        }
+        if (wealth > 100)
+        {
+            wealth = 100;
+        }
+        if (diplomacy < 0)
+        {
+            diplomacy = 0;
+        }
+        if (military < 0)
+        {
+            military = 0;
+        }
+        if (learning < 0)
+        {
+            learning = 0;
+        }
+        if (wealth < 0)
+        {
+            wealth = 0;
+        }
+    }
+
     public Character()
     {
         last_name = CharacterData.PickRandom(CharacterData.last_name_list);
@@ -262,38 +321,8 @@ class Character
         ApplyTrait(trait_2);
         ApplyTrait(trait_3);
 
-        if (diplomacy > 100)
-        {
-            diplomacy = 100;
-        }
-        if (military > 100)
-        {
-            military = 100;
-        }
-        if (learning > 100)
-        {
-            learning = 100;
-        }
-        if (wealth > 100)
-        {
-            wealth = 100;
-        }
-        if (diplomacy < 0)
-        {
-            diplomacy = 0;
-        }
-        if (military < 0)
-        {
-            military = 0;
-        }
-        if (learning < 0)
-        {
-            learning = 0;
-        }
-        if (wealth < 0)
-        {
-            wealth = 0;
-        }
+        ClampStats();
+        overall = (military + wealth + learning + diplomacy) / 4;
     }
 
     public Character CreatePartner()
@@ -359,69 +388,185 @@ class Character
         partner.wealth = PickWealth(partner.title);
         return partner;
     }
-}
 
-static class CharacterData
-{
-    public static String[] male_first_name_list = 
-        [
-        "Edward", "William", "Charles", "George", "Henry", "Richard", "James", "Philip", "Andrew"
-        ];
-    public static String[] female_first_name_list = 
-        [
-        "Matilda", "Anne", "Catherine", "Elizabeth", "Victoria", "Charlotte", "Mary"
-        ];
-    public static String[] last_name_list = 
-        [
-        "Windsor", "Plantagenet", "Tudor", "Hanover", "Stuart", "Capet", "Habsburg"
-        ];
-    public static String[] gender_list = ["Male", "Female"];
-    public static String[] male_title_list = 
-        [
-        "Baron", "Viscount", "Count", "Duke", "Prince", "King", "Emperor"
-        ];
-    public static String[] female_title_list = 
-        [
-        "Baroness", "Viscountess", "Countess", "Duchess", "Princess", "Queen", "Empress"
-        ];
-    public static String[] baron_location_list =
-        [
-    "Yorkshire", "Kent", "Sussex", "Norfolk", "Suffolk", "Cornwall", "Devon", "Somerset", "Essex", "Cheshire"
-        ];
-    public static String[] viscount_location_list =
-        [
-    "Hereford", "Chester", "Stafford", "Worcester", "Durham", "Oxford", "Leicester", "Warwick"
-        ];
-    public static String[] count_location_list =
-        [
-    "Anjou", "Flanders", "Champagne", "Provence", "Burgundy", "Toulouse", "Blois"
-        ];
-    public static String[] duke_location_list =
-        [
-    "York", "Lancaster", "Norfolk", "Cornwall", "Somerset", "Cambridge", "Gloucester", "Buckingham"
-        ];
-    public static String[] prince_location_list =
-        [
-    "Wales", "Scotland", "Normandy", "Aquitaine", "England"
-        ];
-    public static String[] king_location_list =
-        [
-    "England", "Scotland", "Ireland", "Great Britain"
-        ];
-    public static String[] emperor_location_list =
-        [
-    "the British Empire", "the Holy Roman Empire", "North Sea Empire"
-        ];
-    public static String[] trait_list =
-        [
-    "Ambitious", "Shy", "Sadistic", "Brave", "Diligent", "Intelligent", "Gregarious", "Temperate", "Stubborn", "Content", "Decietful", "Greedy",
-    "Arrogant", "Wrathful", "Compassionate", "Calm", "Forgiving", "Craven", "Humble", "Just", "Zealous", "Lazy"
-        ];
-    public static String PickRandom(String[] list)
+    public Character CreateChild(Character partner)
     {
+        Character child = new Character();
+        child.location = location;
         Random random = new Random();
-        int random_index = random.Next(0, list.Length);
-        String chosen = list[random_index];
-        return chosen;
+        int mother_age;
+        if (gender == "Male")
+        {
+            child.last_name = last_name;
+            mother_age = partner.age;
+        }
+        else
+        {
+            child.last_name = partner.last_name;
+            mother_age = age;
+        }
+        int age_at_birth = random.Next(16, Math.Min(mother_age, 40) + 1);
+        child.age = mother_age - age_at_birth;
+
+        if (child.gender == "Male")
+        {
+            child.title = title + "'s son";
+            if (title == "King" || title == "Queen" || title == "Emperor" || title == "Empress")
+            {
+                child.title = "Prince";
+            }
+        }
+        else
+        {
+            child.title = title + "'s daughter";
+            if (title == "King" || title == "Queen" || title == "Emperor" || title == "Empress")
+            {
+                child.title = "Princess";
+            }
+        }
+
+        int random_index = random.Next(1, 4);
+        switch (random_index)
+        {
+            case 1:
+                child.trait_1 = trait_1;
+                break;
+            case 2:
+                child.trait_1 = trait_2;
+                break;
+            case 3:
+                child.trait_1 = trait_3;
+                break;
+        }
+        random_index = random.Next(1, 4);
+        switch (random_index)
+        {
+            case 1:
+                child.trait_2 = partner.trait_1;
+                break;
+            case 2:
+                child.trait_2 = partner.trait_2;
+                break;
+            case 3:
+                child.trait_2 = partner.trait_3;
+                break;
+        }
+        child.trait_3 = CharacterData.PickRandom(CharacterData.trait_list);
+        while (child.trait_1 == child.trait_2  || child.trait_1 == child.trait_3 || child.trait_2 == child.trait_3)
+        {
+            random_index = random.Next(1, 4);
+            switch (random_index)
+            {
+                case 1:
+                    child.trait_1 = trait_1;
+                    break;
+                case 2:
+                    child.trait_1 = trait_2;
+                    break;
+                case 3:
+                    child.trait_1 = trait_3;
+                    break;
+            }
+            random_index = random.Next(1, 4);
+            switch (random_index)
+            {
+                case 1:
+                    child.trait_2 = partner.trait_1;
+                    break;
+                case 2:
+                    child.trait_2 = partner.trait_2;
+                    break;
+                case 3:
+                    child.trait_2 = partner.trait_3;
+                    break;
+            }
+            child.trait_3 = CharacterData.PickRandom(CharacterData.trait_list);
+        }
+
+        if (child.age < 16)
+        {
+            child.wealth = ((wealth + partner.wealth) / 4) + random.Next(-5,6);
+            child.military = ((military + partner.military) / 4) + random.Next(-5, 6);
+            child.diplomacy = ((diplomacy + partner.diplomacy) / 4) + random.Next(-5, 6);
+            child.learning = ((learning + partner.learning) / 4) + random.Next(-5, 6);
+        }
+        else
+        {
+            child.wealth = ((wealth + partner.wealth) / 2) + random.Next(-10, 11);
+            child.military = ((military + partner.military) / 2) + random.Next(-10, 11);
+            child.diplomacy = ((diplomacy + partner.diplomacy) / 2) + random.Next(-10, 11);
+            child.learning = ((learning + partner.learning) / 2) + random.Next(-10, 11);
+        }
+
+        child.ClampStats();
+        child.overall = (child.military + child.wealth + child.learning + child.diplomacy) / 4;
+
+        return child;
+
+    }
+
+    static class CharacterData
+    {
+        public static String[] male_first_name_list =
+            [
+            "Edward", "William", "Charles", "George", "Henry", "Richard", "James", "Philip", "Andrew"
+            ];
+        public static String[] female_first_name_list =
+            [
+            "Matilda", "Anne", "Catherine", "Elizabeth", "Victoria", "Charlotte", "Mary"
+            ];
+        public static String[] last_name_list =
+            [
+            "Windsor", "Plantagenet", "Tudor", "Hanover", "Stuart", "Capet", "Habsburg"
+            ];
+        public static String[] gender_list = ["Male", "Female"];
+        public static String[] male_title_list =
+            [
+            "Baron", "Viscount", "Count", "Duke", "Prince", "King", "Emperor"
+            ];
+        public static String[] female_title_list =
+            [
+            "Baroness", "Viscountess", "Countess", "Duchess", "Princess", "Queen", "Empress"
+            ];
+        public static String[] baron_location_list =
+            [
+        "Yorkshire", "Kent", "Sussex", "Norfolk", "Suffolk", "Cornwall", "Devon", "Somerset", "Essex", "Cheshire"
+            ];
+        public static String[] viscount_location_list =
+            [
+        "Hereford", "Chester", "Stafford", "Worcester", "Durham", "Oxford", "Leicester", "Warwick"
+            ];
+        public static String[] count_location_list =
+            [
+        "Anjou", "Flanders", "Champagne", "Provence", "Burgundy", "Toulouse", "Blois"
+            ];
+        public static String[] duke_location_list =
+            [
+        "York", "Lancaster", "Norfolk", "Cornwall", "Somerset", "Cambridge", "Gloucester", "Buckingham"
+            ];
+        public static String[] prince_location_list =
+            [
+        "Wales", "Scotland", "Normandy", "Aquitaine", "England"
+            ];
+        public static String[] king_location_list =
+            [
+        "England", "Scotland", "Ireland", "Great Britain"
+            ];
+        public static String[] emperor_location_list =
+            [
+        "the British Empire", "the Holy Roman Empire", "North Sea Empire"
+            ];
+        public static String[] trait_list =
+            [
+        "Ambitious", "Shy", "Sadistic", "Brave", "Diligent", "Intelligent", "Gregarious", "Temperate", "Stubborn", "Content", "Decietful", "Greedy",
+    "Arrogant", "Wrathful", "Compassionate", "Calm", "Forgiving", "Craven", "Humble", "Just", "Zealous", "Lazy"
+            ];
+        public static String PickRandom(String[] list)
+        {
+            Random random = new Random();
+            int random_index = random.Next(0, list.Length);
+            String chosen = list[random_index];
+            return chosen;
+        }
     }
 }
